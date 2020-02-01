@@ -16,7 +16,7 @@ function setup() {
 	setGrid();
 	setLevelSelect();
 	grid.show();
-	//loop();
+	noLoop();
 }
 
 function draw() {
@@ -49,14 +49,24 @@ function selectEvent(){
 	updateGrid();
 }
 
-function gameover(){
-	grid.revealAllCells();
-	isGameover = true;
-	noLoop();
+function showMessage(msg, pos, fontSize, foreColor){
+	textSize(fontSize);
+	textStyle(NORMAL);
+	noStroke();
+	fill(foreColor);
+	text(msg, pos.x, pos.y);
 }
 
-function mouseClicked(){
-	return false;
+function gameOver(){
+	console.log('Game over');
+	grid.revealAllCells();
+	isGameover = true;
+	showMessage('Game Over', createVector(width / 2, height * 0.9), 24, RED);
+}
+
+function gameFinished(){
+	console.log('Game finished');
+	showMessage('Game Finished', createVector(width / 2, height * 0.9), 24, GREEN);
 }
 
 function mouseMoved(){
@@ -90,32 +100,33 @@ function mousePressed(){
 			mouseSide = 'right';
 			console.log('mouse right');
 		}
-		else if (mouseButton == CENTER){
-			mouseSide = 'center';
-			console.log('mouse center');
-		}
 	}
 
 	for (let i = 0; i < grid.rows; i++) {
 		for (let j = 0; j < grid.cols; j++) {
-			if (grid.at(i, j).contains(mouseX, mouseY)){
+			let cell = grid.at(i, j)
+			if (cell.contains(mouseX, mouseY)){
 				if (mouseSide == 'left'){
-					if (grid.at(i, j).hasmine){
-						gameover();
-						grid.init();
+					if (cell.hasMine()){
+						gameOver();
 						return;
 					}
-					grid.at(i, j).reveal();
+					cell.reveal();
 					grid.revealSafeZone(i, j);
+					if (grid.countCellsToBeRevealed() == 0){
+						gameFinished();
+					}
 				}
 				else if (mouseSide == 'right'){
 					grid.markUnmark(i, j);
 				}
-				else if (mouseSide == 'center'){
-				}
 			}
 		}
 	}
+	console.log('Total cells: ' + (grid.rows * grid.cols));
+	console.log('Mines: ' + grid.countMines());
+	console.log('Revealed cells: ' + grid.countRevealedCells());
+	console.log('Cells to be revealed: ' + grid.countCellsToBeRevealed());
 }
 
 function keyPressed(){
@@ -127,5 +138,13 @@ function keyPressed(){
 		grid.init();
 		grid.show();
 		console.log('Init grid');
+	}
+}
+
+function mouseReleased(){
+	for (let i = 0; i < grid.rows; i++) {
+		for (let j = 0; j < grid.cols; j++) {
+			grid.at(i, j).setFocused(false);
+		}
 	}
 }

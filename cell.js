@@ -66,6 +66,10 @@ class Cell{
     return x > this.x && x <= this.x + this.size && y > this.y && y <= this.y + this.size;
   }
 
+  hasMine(){
+    return this.hasmine;
+  }
+
   markUnmark(){
     if (this.isMarked){
       this.isMarked = false;

@@ -67,12 +67,76 @@ class Grid{
     this.mat[r][c].markUnmark();
   }
 
+  focusNeighbors(r, c){
+    for (var i = r - 1; i <= r + 1; i++) {
+      for (var j = c - 1; j <= c + 1; j++) {
+        if (i >= 0 && i < this.rows && j >= 0 && j < this.cols){
+          this.at(i, j).setFocused(true);
+        }
+      }
+    }
+  }
+
   revealAllCells(){
     for (var i = 0; i < this.rows; i++) {
       for (var j = 0; j < this.cols; j++) {
         this.mat[i][j].reveal();
       }
     }
+  }
+
+  revealNeighbors(r, c){
+    for (var i = r - 1; i <= r + 1; i++) {
+      for (var j = c - 1; j <= c + 1; j++) {
+        if (i >= 0 && i < this.rows && j >= 0 && j < this.cols){
+          let cell = this.at(i, j);
+          if (cell.nearbymines == this.countMarkedNeighbors(r, c)){
+            cell.reveal();
+            return !cell.hasMine();
+          }
+        } 
+      }
+    }
+  }
+
+  countMarkedNeighbors(r, c){
+    let count = 0;
+    for (var i = r - 1; i <= r + 1; i++) {
+      for (var j = c - 1; j <= c + 1; j++) {
+        if (i >= 0 && i < this.rows && j >= 0 && j < this.cols && this.mat[i][j].isMarked){
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  countMines(){
+    let count = 0;
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        if (this.mat[i][j].hasMine()){
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  countRevealedCells(){
+    let count = 0;
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        if (this.mat[i][j].isRevealed){
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  countCellsToBeRevealed(){
+    return this.rows * this.cols - this.countMines() - this.countRevealedCells();
   }
 
   show(){
