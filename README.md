@@ -4,4 +4,4 @@ Mines Sweeper Game
 - Recursion
 - Object Oriented Programming
 ### Launch
-- Go to URL: https://eladkap.github.io/MinesSweeper
+- Go to URL: https://eladkap.github.io/mines_sweeper
